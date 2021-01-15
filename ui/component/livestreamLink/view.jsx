@@ -24,18 +24,29 @@ export default function LivestreamLink(props: Props) {
   });
 
   React.useEffect(() => {
+    let interval;
     if (hasLivestreamClaim) {
-      fetch(`${BITWAVE_API}/${BITWAVE_USERNAME}`)
-        .then(res => {
-          console.log('res', res);
-          if (res && res.data && res.data.live) {
-            setIsLivestreaming(true);
-          }
-        })
-        .catch(e => {
-          console.log('e', e);
-        });
+      function fetchIsStreaming() {
+        fetch(`${BITWAVE_API}/${BITWAVE_USERNAME}`)
+          .then(res => {
+            console.log('res', res);
+            if (res && res.data && res.data.live) {
+              setIsLivestreaming(true);
+            }
+          })
+          .catch(e => {
+            console.log('e', e);
+          });
+      }
+
+      interval = setInterval(fetchIsStreaming, 5000);
     }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
   }, [hasLivestreamClaim]);
 
   if (!hasLivestreamClaim || !isLivestreaming) {
