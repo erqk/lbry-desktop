@@ -2,12 +2,13 @@
 import { LIVE_STREAM_CHANNEL_CLAIM_ID, BITWAVE_API, BITWAVE_USERNAME } from 'constants/livestream';
 import React from 'react';
 import Card from 'component/common/card';
+import ClaimPreview from 'component/claimPreview';
 import { Lbry } from 'lbry-redux';
 
 type Props = {};
 
 export default function LivestreamLink(props: Props) {
-  const [hasLivestreamClaim, setHasLivestreamClaim] = React.useState(false);
+  const [livestreamClaimUrl, setLivestreamClaimUrl] = React.useState(false);
   const [isLivestreaming, setIsLivestreaming] = React.useState(false);
 
   React.useEffect(() => {
@@ -17,7 +18,8 @@ export default function LivestreamLink(props: Props) {
     })
       .then(res => {
         if (res && res.items && res.items.length > 0) {
-          setHasLivestreamClaim(true);
+          const claimUrl = res.items[0].canonical_url;
+          setLivestreamClaimUrl(claimUrl);
         }
       })
       .catch(() => {});
@@ -25,11 +27,11 @@ export default function LivestreamLink(props: Props) {
 
   React.useEffect(() => {
     let interval;
-    if (hasLivestreamClaim) {
+    if (livestreamClaimUrl) {
       function fetchIsStreaming() {
         fetch(`${BITWAVE_API}/${BITWAVE_USERNAME}`)
+          .then(res => res.json())
           .then(res => {
-            console.log('res', res);
             if (res && res.data && res.data.live) {
               setIsLivestreaming(true);
             }
@@ -47,9 +49,9 @@ export default function LivestreamLink(props: Props) {
         clearInterval(interval);
       }
     };
-  }, [hasLivestreamClaim]);
+  }, [livestreamClaimUrl]);
 
-  if (!hasLivestreamClaim || !isLivestreaming) {
+  if (!livestreamClaimUrl || !isLivestreaming) {
     return null;
   }
 
@@ -58,7 +60,7 @@ export default function LivestreamLink(props: Props) {
       <Card
         className="livestream__channel-link"
         title="Live stream in progress"
-        actions={<ClaimPreview uri="lbry://118bpm" />}
+        actions={<ClaimPreview uri={livestreamClaimUrl} />}
       />
     </>
   );
