@@ -26,11 +26,15 @@ import SelectThumbnail from 'component/selectThumbnail';
 import Card from 'component/common/card';
 import I18nMessage from 'component/i18nMessage';
 import * as PUBLISH_MODES from 'constants/publish_types';
+import { FormField } from 'component/common/form';
 
 // @if TARGET='app'
 import fs from 'fs';
 import tempy from 'tempy';
 // @endif
+
+const LIVESTREAM_CHANNEL_CLAIM_ID = '84b50bafd028692c90a25b83d0929defc73154b2';
+const LIVESTREAM_CHANNEL_NAME = '@sy-test';
 
 const MODES = Object.values(PUBLISH_MODES);
 
@@ -85,6 +89,8 @@ type Props = {
   ytSignupPending: boolean,
   modal: { id: string, modalProps: {} },
   enablePublishPreview: boolean,
+  myChannels: ?Array<ChannelClaim>,
+  isLivestreamPublish: boolean,
 };
 
 function PublishForm(props: Props) {
@@ -123,7 +129,15 @@ function PublishForm(props: Props) {
     ytSignupPending,
     modal,
     enablePublishPreview,
+    myChannels,
+    isLivestreamPublish,
   } = props;
+
+  // livestream hardcoded bidnezz
+  const isLivestreamCreator =
+    myChannels &&
+    myChannels.find(channelClaim => channelClaim.claim_id === LIVESTREAM_CHANNEL_CLAIM_ID) &&
+    channel === LIVESTREAM_CHANNEL_NAME;
 
   // Used to check if name should be auto-populated from title
   const [autoPopulateNameFromTitle, setAutoPopulateNameFromTitle] = useState(!isStillEditing);
@@ -402,6 +416,21 @@ function PublishForm(props: Props) {
 
           <PublishPrice disabled={formDisabled} />
           <PublishAdditionalOptions disabled={formDisabled} />
+        </div>
+      )}
+
+      {isLivestreamCreator && (
+        <div className="livestream__publish-checkbox">
+          Hi {channel}! <br /> <br /> Check this box if this going to be your livestream publish. It doesn't matter what
+          file you choose for now, just make the sure the title, description, and tags are correct. Everything else is
+          setup!
+          <FormField
+            type="checkbox"
+            label="This is for my livestream"
+            name="is_livestream_checkbox"
+            checked={isLivestreamPublish}
+            onChange={e => updatePublishForm({ isLivestreamPublish: e.target.checked })}
+          />
         </div>
       )}
       <section>

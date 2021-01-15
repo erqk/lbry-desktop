@@ -200,6 +200,7 @@ const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
   function handleOnClick(e) {
     if (onClick) {
       onClick(e);
+      return;
     }
 
     if (claim && !pending) {
