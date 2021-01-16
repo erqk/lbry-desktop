@@ -1,4 +1,4 @@
-export const LBRY_URL_FOR_LIVESTREAM = 'lbry://@SaltyCracker#a/30-thousand-troops-take-over-dc-for-most#3';
+export const LBRY_URL_FOR_LIVESTREAM = 'lbry://@SaltyCracker#a/biden-cancels-inauguration-rehearsal-dc#d';
 
 export const LIVE_STREAM_CHANNEL = '@sy-test';
 export const LIVE_STREAM_CHANNEL_CLAIM_ID = '84b50bafd028692c90a25b83d0929defc73154b2';
