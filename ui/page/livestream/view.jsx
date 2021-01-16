@@ -1,4 +1,5 @@
 // @flow
+import { LIVE_STREAM_CHANNEL_CLAIM_ID, BITWAVE_API, BITWAVE_USERNAME, BITWAVE_EMBED_URL } from 'constants/livestream';
 import React from 'react';
 import classnames from 'classnames';
 import { Lbry } from 'lbry-redux';
@@ -17,8 +18,10 @@ type Props = {
 };
 
 export default function LivestreamPage(props: Props) {
-  const { claim, uri, bitwaveUrl, doResolveUri } = props;
+  const { claim, uri, doResolveUri } = props;
   const [comments, setComments] = React.useState([]);
+  const [isLive, setIsLive] = React.useState(false);
+
   const claimId = claim && claim.claim_id;
 
   React.useEffect(() => {
@@ -43,21 +46,31 @@ export default function LivestreamPage(props: Props) {
       });
     }
 
+    let interval;
     if (claimId) {
-      setInterval(() => {
+      interval = setInterval(() => {
         fetchComments();
       }, 5000);
     }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
   }, [claimId]);
 
   React.useEffect(() => {
-    fetch('https://cdn.stream.bitwave.tv/hls/thomas.zarebczan/index.m3u8')
+    fetch(`${BITWAVE_API}/${BITWAVE_USERNAME}`)
+      .then(res => res.json())
       .then(res => {
-        console.log('res', res);
+        if (res && res.data && res.data.live) {
+          setIsLive(true);
+        } else {
+          setIsLive(false);
+        }
       })
-      .then(err => {
-        console.log('e', err);
-      });
+      .catch(() => {});
   }, []);
 
   if (!claim) {
@@ -67,10 +80,18 @@ export default function LivestreamPage(props: Props) {
   return (
     <Page className="file-page" filePage>
       <div className={classnames('section card-stack')}>
-        <div className={classnames('file-render file-render--video livestream')}>
-          <div className="file-viewer">
-            <iframe src={bitwaveUrl} />
-          </div>
+        <div
+          className={classnames('file-render file-render--video livestream', {
+            'livestream--offline': !isLive,
+          })}
+        >
+          {isLive ? (
+            <div className="file-viewer">
+              <iframe src={`${BITWAVE_EMBED_URL}/${BITWAVE_USERNAME}`} />
+            </div>
+          ) : (
+            <div className="livestream__offline">This creator isn't live right now</div>
+          )}
         </div>
 
         <FileTitle uri={uri} />
