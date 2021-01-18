@@ -8,6 +8,7 @@
   File upload is carried out in the background by that function.
  */
 
+import { LIVE_STREAM_CHANNEL, LIVE_STREAM_CHANNEL_CLAIM_ID } from 'constants/livestream';
 import { SITE_NAME } from 'config';
 import { CHANNEL_NEW, CHANNEL_ANONYMOUS } from 'constants/claim';
 import React, { useEffect, useState } from 'react';
@@ -32,9 +33,6 @@ import { FormField } from 'component/common/form';
 import fs from 'fs';
 import tempy from 'tempy';
 // @endif
-
-const LIVESTREAM_CHANNEL_CLAIM_ID = '84b50bafd028692c90a25b83d0929defc73154b2';
-const LIVESTREAM_CHANNEL_NAME = '@sy-test';
 
 const MODES = Object.values(PUBLISH_MODES);
 
@@ -136,8 +134,8 @@ function PublishForm(props: Props) {
   // livestream hardcoded bidnezz
   const isLivestreamCreator =
     myChannels &&
-    myChannels.find(channelClaim => channelClaim.claim_id === LIVESTREAM_CHANNEL_CLAIM_ID) &&
-    channel === LIVESTREAM_CHANNEL_NAME;
+    myChannels.find(channelClaim => channelClaim.claim_id === LIVE_STREAM_CHANNEL_CLAIM_ID) &&
+    channel === LIVE_STREAM_CHANNEL;
 
   // Used to check if name should be auto-populated from title
   const [autoPopulateNameFromTitle, setAutoPopulateNameFromTitle] = useState(!isStillEditing);
