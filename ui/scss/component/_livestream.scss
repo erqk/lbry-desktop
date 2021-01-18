@@ -1,11 +1,13 @@
 .livestream {
   flex: 1;
   width: 100%;
-  padding-top: calc(var(--aspect-ratio-standard) + 32px); // 32px for bitwaves logo below the player
+  padding-top: var(--aspect-ratio-standard);
+
   position: relative;
   border-radius: var(--border-radius);
 
   iframe {
+    overflow: hidden;
     border-radius: var(--border-radius);
     height: 100%;
     position: absolute;
@@ -14,12 +16,6 @@
     right: 0;
     bottom: 0;
   }
-}
-
-.livestream--offline {
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .livestream__comments {
