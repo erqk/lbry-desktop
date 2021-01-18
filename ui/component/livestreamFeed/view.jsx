@@ -43,9 +43,10 @@ export default function LivestreamFeed(props: Props) {
 
     let interval;
     if (claimId) {
+      fetchComments();
       interval = setInterval(() => {
         fetchComments();
-      }, 5000);
+      }, 500000);
     }
 
     return () => {
@@ -59,6 +60,7 @@ export default function LivestreamFeed(props: Props) {
     return null;
   }
 
+  console.log('comments', comments);
   return (
     <>
       <div className={classnames('section card-stack')}>
@@ -97,7 +99,20 @@ export default function LivestreamFeed(props: Props) {
             )}
 
             <div className="livestream__comment-create">
-              <CommentCreate uri={uri} />
+              <CommentCreate
+                uri={uri}
+                onSubmit={(commentValue, channel) => {
+                  const commentsWithStub = comments.slice();
+                  commentsWithStub.unshift({
+                    comment: commentValue,
+                    channel_name: channel,
+                    timestamp: Date.now() / 1000,
+                    comment_id: Math.random(),
+                  });
+
+                  setComments(commentsWithStub);
+                }}
+              />
             </div>
           </>
         }

@@ -42,6 +42,7 @@ export function CommentCreate(props: Props) {
     isPostingComment,
     activeChannel,
     setCommentChannel,
+    onSubmit,
   } = props;
   const buttonref: ElementRef<any> = React.useRef();
   const { push } = useHistory();
@@ -95,6 +96,10 @@ export function CommentCreate(props: Props) {
 
   function handleSubmit() {
     if (activeChannel !== CHANNEL_NEW && commentValue.length) {
+      if (onSubmit) {
+        onSubmit(commentValue, activeChannel);
+      }
+
       createComment(commentValue, claimId, activeChannel, parentId).then(res => {
         if (res && res.signature) {
           setCommentValue('');
