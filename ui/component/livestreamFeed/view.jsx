@@ -8,6 +8,7 @@ import Card from 'component/common/card';
 import Spinner from 'component/spinner';
 import DateTime from 'component/dateTime';
 import CommentCreate from 'component/commentCreate';
+import Button from 'component/button';
 
 type Props = {
   uri: string,
@@ -16,6 +17,7 @@ type Props = {
 
 export default function LivestreamFeed(props: Props) {
   const { claim, uri, doResolveUri } = props;
+  const [fetchingComments, setFetchingComments] = React.useState(true);
   const [comments, setComments] = React.useState([]);
   const claimId = claim && claim.claim_id;
 
@@ -30,7 +32,7 @@ export default function LivestreamFeed(props: Props) {
       Lbry.comment_list({
         claim_id: claimId,
         page: 1,
-        page_size: 50,
+        page_size: 200,
         include_replies: false,
         skip_validation: true,
       }).then(response => {
@@ -38,6 +40,7 @@ export default function LivestreamFeed(props: Props) {
         if (comments) {
           setComments(comments);
         }
+        setFetchingComments(false);
       });
     }
 
@@ -60,7 +63,6 @@ export default function LivestreamFeed(props: Props) {
     return null;
   }
 
-  console.log('comments', comments);
   return (
     <>
       <div className={classnames('section card-stack')}>
@@ -75,31 +77,38 @@ export default function LivestreamFeed(props: Props) {
       <Card
         title="Live Discussion"
         smallTitle
-        className="file-page__recommended card"
+        className="livestream__discussion"
         actions={
           <>
-            {comments.length ? (
+            {fetchingComments && (
+              <div className="main--empty">
+                <Spinner />
+              </div>
+            )}
+            {!fetchingComments && comments.length > 0 ? (
               <div className="livestream__comments">
                 {comments.map(comment => (
                   <div key={comment.comment_id} className="livestream__comment">
-                    <div className="livestream__comment-meta">
+                    {comment.channel_url ? (
+                      <Button
+                        className="livestream__comment-author"
+                        navigate={comment.channel_url}
+                        label={comment.channel_name}
+                      />
+                    ) : (
                       <div className="livestream__comment-author">{comment.channel_name}</div>
-                      <div className="">
-                        <DateTime date={comment.timestamp * 1000} timeAgo />
-                      </div>
-                    </div>
+                    )}
                     <div className="">{comment.comment}</div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="main--empty">
-                <Spinner />
-              </div>
+              <div className="main--empty" />
             )}
 
             <div className="livestream__comment-create">
               <CommentCreate
+                bottom
                 uri={uri}
                 onSubmit={(commentValue, channel) => {
                   const commentsWithStub = comments.slice();

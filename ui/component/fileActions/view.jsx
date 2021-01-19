@@ -100,7 +100,7 @@ function FileActions(props: Props) {
       <Button
         className="button--file-action"
         icon={ICONS.SHARE}
-        label={__('Share')}
+        label={isMobile ? undefined : __('Share')}
         title={__('Share')}
         onClick={() => openModal(MODALS.SOCIAL_SHARE, { uri, webShareable })}
       />

@@ -26,6 +26,7 @@ type Props = {
   isPostingComment: boolean,
   activeChannel: string,
   setCommentChannel: string => void,
+  bottom: boolean,
 };
 
 export function CommentCreate(props: Props) {
@@ -43,6 +44,7 @@ export function CommentCreate(props: Props) {
     activeChannel,
     setCommentChannel,
     onSubmit,
+    bottom,
   } = props;
   const buttonref: ElementRef<any> = React.useRef();
   const { push } = useHistory();
@@ -140,6 +142,7 @@ export function CommentCreate(props: Props) {
       className={classnames('comment__create', {
         'comment__create--reply': isReply,
         'comment__create--nested-reply': isNested,
+        'comment__create--bottom': bottom,
       })}
     >
       <FormField

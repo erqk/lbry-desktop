@@ -1,3 +1,5 @@
+// export const LIVE_STREAM_CHANNEL = '@deeveeaar';
+// export const LIVE_STREAM_CHANNEL_CLAIM_ID = 'fec4a430e6732406851281ef005bbef751ea8b23';
 export const LIVE_STREAM_CHANNEL = '@thomas.zarebczan';
 export const LIVE_STREAM_CHANNEL_CLAIM_ID = 'cb7ea953be131d156a780ff400414a187123e589';
 export const BITWAVE_API = 'https://api.bitwave.tv/v1/channels';

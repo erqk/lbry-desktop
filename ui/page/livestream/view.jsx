@@ -7,6 +7,7 @@ import LivestreamFeed from 'component/livestreamFeed';
 import Spinner from 'component/spinner';
 import Yrbl from 'component/yrbl';
 import Button from 'component/button';
+import analytics from 'analytics';
 
 type Props = {
   claim: ?Claim,
@@ -25,6 +26,7 @@ export default function LivestreamPage(props: Props) {
   React.useEffect(() => {
     Lbry.claim_search({
       channel_ids: [LIVE_STREAM_CHANNEL_CLAIM_ID],
+      //   any_tags: ['odysee-livestream', 'deeveeaar'],
       any_tags: ['odysee-livestream'],
       claim_type: ['stream'],
     })
@@ -53,6 +55,20 @@ export default function LivestreamPage(props: Props) {
         setIsFetching(false);
       });
   }, []);
+
+  const stringifiedClaim = JSON.stringify(livestreamClaim);
+  React.useEffect(() => {
+    if (uriFromLivestreamClaim && stringifiedClaim) {
+      const jsonClaim = JSON.parse(stringifiedClaim);
+
+      if (jsonClaim) {
+        const { txid, nout, claim_id: claimId } = jsonClaim;
+        const outpoint = `${txid}:${nout}`;
+
+        analytics.apiLogView(uriFromLivestreamClaim, outpoint, claimId);
+      }
+    }
+  }, [uriFromLivestreamClaim, stringifiedClaim]);
 
   return (
     <Page className="file-page" filePage>
